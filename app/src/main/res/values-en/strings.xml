@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sudoku Wave</string>
+    <string name="home_icone">Home</string>"
+    <string name="user_icone">User</string>
+    <string name="notifications_icone">Notifications</string>
+    <string name="configuration_icone">Configuration</string>
+</resources>
