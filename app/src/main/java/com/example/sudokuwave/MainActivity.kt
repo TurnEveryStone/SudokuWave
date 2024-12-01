@@ -1,5 +1,5 @@
 package com.example.sudokuwave
-import HomeFragment
+
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,8 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
 import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import com.example.sudokuwave.viewmodel.SharedViewModel
+import androidx.compose.runtime.livedata.observeAsState
 
 class MainActivity : AppCompatActivity() {
     var userNumber: String = "Nobody"
@@ -61,8 +64,8 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         AppContent("Android")
                         FragmentContainerComposable()
-
-                    }
+                        ObserveViewModel(sharedViewModel)
+                   }
                 }
             }
         }
@@ -130,5 +133,10 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
+    /***************************************************/
+    @Composable
+    fun ObserveViewModel(sharedViewModel: SharedViewModel) {
+        val value = sharedViewModel.stateFlowVariable.collectAsState().value
+        Text(text = "La variable StateFlow a changé : $value")
+    }
 }
-
