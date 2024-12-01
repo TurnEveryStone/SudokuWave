@@ -1,4 +1,5 @@
 package com.example.sudokuwave
+
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -19,7 +20,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         // Modifier les données
         view.findViewById<Button>(R.id.button_update).setOnClickListener {
-            sharedViewModel.updateLiveData("Nouvelle valeur depuis FirstFragment")
+            sharedViewModel.updateLiveData("Nouvelle valeur depuis HomeFragment")
         }
     }
 }
