@@ -4,4 +4,6 @@
     <string name="user_icone">Utilisateur</string>
     <string name="notifications_icone">Notifications</string>
     <string name="configuration_icone">Configuration</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
