@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import viewmodel.SharedViewModel
 
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class ConfigFragment : Fragment(R.layout.fragment_config) {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
