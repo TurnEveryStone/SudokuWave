@@ -1,6 +1,7 @@
 package com.example.sudokuwave
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.compose.setContent
@@ -28,16 +29,25 @@ import viewmodel.SharedViewModel
 /***************************************************/
 class MainActivity : AppCompatActivity() {
     var userNumber: String = "Nobody"
-    var idUser: Int = 0
+   // var idUser: Int = 0
     private val sharedViewModel: SharedViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val currentFragmentTag = remember { sharedViewModel.stateFlowVariable }
+
             SudokuWaveTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(),
-                    topBar = {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = Color.Gray)
+                            .padding(innerPadding)
+                    ) {
+                        // Afficher le menu en haut du contenu
                         val (leftContent, centerContent, rightContent) = getMenuConfigForFragment(currentFragmentTag.value)
                         CustomMenu(
                             leftContent = leftContent,
@@ -47,20 +57,14 @@ class MainActivity : AppCompatActivity() {
                                 println("Clicked on $element")
                             }
                         )
-                    }
-                ) { innerPadding ->
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = Color.Gray)
-                            .padding(innerPadding)
-                    ) {
+                        // Contenu principal
                         Text(text = "Hello $userNumber")
                         FragmentContainerComposable()
                         ObserveViewModel(sharedViewModel)
                     }
                 }
+
             }
         }
     }
@@ -94,14 +98,15 @@ class MainActivity : AppCompatActivity() {
         return when (fragmentTag) {
             "HomeFragment" -> Triple(
                 listOf(MenuElement.TextItem("Home", isClickable = true)),
-                listOf(MenuElement.TextItem("MyApp", isClickable = false)),
-                listOf(MenuElement.ButtonItem("Click Me") { println("Button clicked!") })
+                listOf(MenuElement.TextItem("MyApp", isClickable = true)),
+                listOf(MenuElement.ButtonItem("Click Me") { Log.d("Kikou ","Button clicked!") })
             )
             else -> Triple(emptyList(), emptyList(), emptyList())
         }
     }
     /***************************************************/
 }
+
 
 
 

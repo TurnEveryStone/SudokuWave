@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class SharedViewModel : ViewModel() {
     // StateFlow pour Jetpack Compose
-    private val _stateFlowVariable = MutableStateFlow("Valeur initiale")
+    private val _stateFlowVariable = MutableStateFlow("HomeFragment")
     val stateFlowVariable: StateFlow<String> = _stateFlowVariable
 
     fun updateStateFlow(value: String) {
@@ -16,7 +16,7 @@ class SharedViewModel : ViewModel() {
     }
 
     // LiveData pour les Fragments classiques
-    private val _liveDataVariable = MutableLiveData<String>("Valeur initiale")
+    private val _liveDataVariable = MutableLiveData<String>("HomeFragment")
     val liveDataVariable: LiveData<String> = _liveDataVariable
 
     fun updateLiveData(value: String) {
