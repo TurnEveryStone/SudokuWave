@@ -1,7 +1,9 @@
 package com.example.sudokuwave.ui
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 
 sealed class MenuElement {
     data class TextItem(
@@ -25,5 +27,10 @@ sealed class MenuElement {
     data class ButtonItem(
         val text: String,
         val onClick: () -> Unit
+    ) : MenuElement()
+    data class SwitchButtonItem(
+        var checked: Boolean,
+        val text: String,
+        val onClick: () -> Unit,
     ) : MenuElement()
 }
