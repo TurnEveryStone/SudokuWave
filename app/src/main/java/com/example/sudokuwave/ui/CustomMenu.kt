@@ -7,17 +7,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sudokuwave.MainActivity.MenuConfig
-import com.example.sudokuwave.MainActivity.MenuStyle
+
 
 @Composable
 fun CustomMenu(
@@ -28,33 +24,43 @@ fun CustomMenu(
         modifier = Modifier
             .fillMaxWidth()
             .background(config.style.backgroundColor)
-            .padding(config.style.padding),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+            .padding(config.style.padding)
     ) {
-        // Left content
-        Row(verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.Center) {
-            config.leftContent.forEach { element ->
-                MenuElementComposable(element, onElementClick, config.style.textColor)
-            }
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            // Left content
+            BuildMenuContainer(
+                container = config.leftContent,
+                onElementClick = onElementClick,
+                textColor = config.style.textColor
+            )
         }
-
         // Center content
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            config.centerContent.forEach { element ->
-                MenuElementComposable(element, onElementClick, config.style.textColor)
-            }
+            BuildMenuContainer(
+                container = config.centerContent,
+                onElementClick = onElementClick,
+                textColor = config.style.textColor
+            )
         }
-
-        // Right content
-        Row(verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.Center) {
-            config.rightContent.forEach { element ->
-                MenuElementComposable(element, onElementClick, config.style.textColor)
-            }
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            // Right content
+            BuildMenuContainer(
+                container = config.rightContent,
+                onElementClick = onElementClick,
+                textColor = config.style.textColor
+            )
         }
     }
 }
@@ -67,12 +73,13 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
             Text(
                 text = element.text,
                 style = element.style.copy(color = textColor),
-               // textAlign = TextAlign.Center,
+                // textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(4.dp)
                     .clickable(enabled = element.isClickable) { onClick(element) }
             )
         }
+
         is MenuElement.IconItem -> {
             IconButton(onClick = { if (element.isClickable) onClick(element) }) {
                 Icon(
@@ -82,6 +89,7 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
                 )
             }
         }
+
         is MenuElement.ImageItem -> {
             Image(
                 painter = painterResource(id = element.imageRes),
@@ -91,6 +99,7 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
                     .clickable(enabled = element.isClickable) { onClick(element) }
             )
         }
+
         is MenuElement.ButtonItem -> {
             Button(onClick = element.onClick) {
                 Text(text = element.text, color = textColor)
@@ -98,16 +107,42 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
         }
 
         is MenuElement.SwitchButtonItem -> {
-           // element.checked by remember { mutableStateOf(true) }
-
+            // element.checked by remember { mutableStateOf(true) }
 
 
             Button(onClick = element.onClick) {
                 Text(text = element.text, color = textColor)
             }
         }
-
-
-
     }
 }
+
+@Composable
+fun BuildMenuContainer(
+    container: MenuContainer,
+    onElementClick: (MenuElement) -> Unit,
+    textColor: Color
+) {
+    when (container) {
+        is MenuContainer.SingleItem -> {
+            MenuElementComposable(container.element, onElementClick, textColor)
+        }
+
+        is MenuContainer.RowContainer -> {
+            Row {
+                container.children.forEach { child ->
+                    BuildMenuContainer(child, onElementClick, textColor)
+                }
+            }
+        }
+
+        is MenuContainer.ColumnContainer -> {
+            Column {
+                container.children.forEach { child ->
+                    BuildMenuContainer(child, onElementClick, textColor)
+                }
+            }
+        }
+    }
+}
+/*********************************************************/

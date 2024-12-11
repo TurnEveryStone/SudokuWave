@@ -1,10 +1,13 @@
 package com.example.sudokuwave.ui
 
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 
+sealed class MenuContainer {
+    data class SingleItem(val element: MenuElement) : MenuContainer()
+    data class RowContainer(val children: List<MenuContainer>) : MenuContainer()
+    data class ColumnContainer(val children: List<MenuContainer>) : MenuContainer()
+}
 sealed class MenuElement {
     data class TextItem(
         val text: String,

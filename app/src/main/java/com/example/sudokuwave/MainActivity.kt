@@ -1,9 +1,11 @@
 package com.example.sudokuwave
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -13,8 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,11 +26,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.sudokuwave.ui.CustomMenu
+import com.example.sudokuwave.ui.MenuContainer
 import com.example.sudokuwave.ui.MenuElement
 import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import viewmodel.SharedViewModel
@@ -44,20 +44,53 @@ class MainActivity : AppCompatActivity() {
      //,  val fontFamily: FontFamily
     )
     /***/
+
     data class MenuConfig(
         val style: MenuStyle = MenuStyle(),
-        val leftColumn:Boolean = false,
-        val leftContent: List<MenuElement> = emptyList(),
-        val centerContent: List<MenuElement> = emptyList(),
-        val rightContent: List<MenuElement> = emptyList()
+        val leftContent: MenuContainer = MenuContainer.RowContainer(emptyList()),
+        val centerContent: MenuContainer = MenuContainer.RowContainer(emptyList()),
+        val rightContent: MenuContainer = MenuContainer.RowContainer(emptyList())
     )
+
+    var nomApp : String = "Sudoku Wave"
+    var userNumber: String = "Nobody"
     /***/
     /*
    val context = LocalContext.current
    val nomApp : String = context.getString(R.string.app_name)
  */
-   var nomApp : String = "Sudoku Wave"
-   var userNumber: String = "Nobody"
+    val menuConfig = MenuConfig(
+        style = MenuStyle(
+            backgroundColor = Color.White,
+            textColor = Color.Black,
+            padding = PaddingValues(2.dp)
+        ),
+        leftContent = MenuContainer.ColumnContainer(
+            listOf(
+                MenuContainer.SingleItem(MenuElement.TextItem("Left Item", isClickable = true)),
+                MenuContainer.SingleItem(MenuElement.TextItem("Clickable", isClickable = true))
+            )
+        ),
+        centerContent = MenuContainer.ColumnContainer(
+            listOf(
+                MenuContainer.SingleItem(MenuElement.TextItem(nomApp,
+                    style = TextStyle(
+                        fontFamily = FontFamily.Cursive,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 24.sp))),
+                MenuContainer.SingleItem(MenuElement.TextItem("Center Line 2"))
+            )
+        ),
+        rightContent = MenuContainer.ColumnContainer(
+            listOf(
+               // MenuContainer.SingleItem(MenuElement.IconItem(Icons.Default.Home, "Home")),
+                //MenuContainer.SingleItem(MenuElement.ButtonItem("Click Me") { println("Button clicked!") }),
+                MenuContainer.SingleItem(MenuElement.TextItem("Droite", isClickable = true)),
+                MenuContainer.SingleItem(MenuElement.TextItem(nomApp))
+            )
+        )
+    )
+
    // var idUser: Int = 0
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -65,24 +98,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
-            val currentFragmentTag = sharedViewModel.stateFlowVariable.collectAsState().value
-
-
-
             SudokuWaveTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
 
-                    val menuConfig = getMenuConfigForFragment(currentFragmentTag)
-                    Column(modifier = Modifier.fillMaxSize().background(color = Color.Gray).padding(innerPadding))
+                    Column(modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.Gray)
+                        .padding(innerPadding))
                     {
                         // Afficher le menu en haut du contenu
+                        val context = LocalContext.current
                         CustomMenu(
                             config = menuConfig,
-                            onElementClick = { element ->
-                                Log.d("Menu Click","Clicked on $element")
-                            }
+                            onElementClick = { element -> handleMenuClick(element, context) }
                         )
 
                         // Contenu principal
@@ -121,41 +150,17 @@ class MainActivity : AppCompatActivity() {
         Text(text = "La variable StateFlow a changé : $value")
     }
     /***************************************************/
-
-
-    private fun getMenuConfigForFragment(fragmentTag: String): MenuConfig {
-        return when (fragmentTag) {
-            "HomeFragment" -> MenuConfig(
-                leftContent = listOf(MenuElement.TextItem(text="Home" ,isClickable = true),MenuElement.IconItem(Icons.Default.Settings,"Configuration",isClickable = true)),
-                centerContent = listOf(
-                    MenuElement.TextItem(
-                        nomApp,
-                        style = TextStyle(
-                            fontFamily = FontFamily.Cursive,
-                            fontStyle = FontStyle.Italic,
-                            fontSize = 32.sp)),
-                    //MenuElement.TextItem("\n"),
-                   // MenuElement.TextItem("Settings App")
-                ),
-                rightContent = listOf(MenuElement.ButtonItem("Click Me") { println("Button clicked!") })
-            )
-            "SettingsFragment" -> MenuConfig(
-                style = MenuStyle(
-                    backgroundColor = Color.Gray,
-                    textColor = Color.Black,
-                    padding = PaddingValues(vertical = 16.dp)
-                ),
-                leftContent = listOf(MenuElement.TextItem("Settings", isClickable = true)),
-                centerContent = listOf(MenuElement.TextItem("Settings App")),
-                rightContent = listOf(MenuElement.IconItem(Icons.Default.Settings, "Settings"))
-            )
-            else -> MenuConfig()
+    private fun handleMenuClick(element: MenuElement, context:Context) {
+        when (element) {
+            is MenuElement.TextItem -> {
+                Log.d("Menu Click", "Text clicked: ${element.text}")
+                Toast.makeText(context, "Clicked on: $element", Toast.LENGTH_LONG).show()
+            }
+            is MenuElement.IconItem -> Log.d("Menu Click", "Icon clicked: ${element.contentDescription}")
+            is MenuElement.ButtonItem -> element.onClick.invoke()
+            else -> Log.d("Menu Click", "Unknown element clicked")
         }
     }
-
-
-
-
     /***************************************************/
 }
 
