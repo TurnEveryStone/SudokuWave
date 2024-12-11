@@ -1,5 +1,6 @@
 package com.example.sudokuwave.ui
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 
@@ -10,6 +11,7 @@ sealed class MenuContainer {
 }
 sealed class MenuElement {
     data class TextItem(
+
         val text: String,
         val style: TextStyle = TextStyle.Default,
         val isClickable: Boolean = false

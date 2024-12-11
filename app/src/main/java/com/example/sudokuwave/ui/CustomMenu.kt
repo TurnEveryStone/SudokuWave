@@ -14,56 +14,67 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.sudokuwave.MainActivity.MenuConfig
 
-
 @Composable
 fun CustomMenu(
     config: MenuConfig,
     onElementClick: (MenuElement) -> Unit
 ) {
+    //var alignment: Alignment
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(config.style.backgroundColor)
             .padding(config.style.padding)
     ) {
+        // Section Gauche
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            // Left content
+           // val alignment: AlignmentType= AlignmentType.Start
             BuildMenuContainer(
                 container = config.leftContent,
                 onElementClick = onElementClick,
-                textColor = config.style.textColor
+                textColor = config.style.textColor,
+                Alignment.Start
+
             )
         }
-        // Center content
+
+        // Section Centre
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             BuildMenuContainer(
                 container = config.centerContent,
                 onElementClick = onElementClick,
-                textColor = config.style.textColor
+                textColor = config.style.textColor,
+                Alignment.CenterHorizontally
             )
         }
+
+        // Section Droite
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            // Right content
             BuildMenuContainer(
                 container = config.rightContent,
                 onElementClick = onElementClick,
-                textColor = config.style.textColor
+                textColor = config.style.textColor,
+                Alignment.End
             )
         }
     }
 }
+
 
 
 @Composable
@@ -118,7 +129,7 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
 }
 
 @Composable
-fun BuildMenuContainer(
+fun BuildMenuContainer2(
     container: MenuContainer,
     onElementClick: (MenuElement) -> Unit,
     textColor: Color
@@ -129,7 +140,8 @@ fun BuildMenuContainer(
         }
 
         is MenuContainer.RowContainer -> {
-            Row {
+            Row(modifier = Modifier.background(Color.Red),)
+            {
                 container.children.forEach { child ->
                     BuildMenuContainer(child, onElementClick, textColor)
                 }
@@ -137,7 +149,11 @@ fun BuildMenuContainer(
         }
 
         is MenuContainer.ColumnContainer -> {
-            Column {
+            Column(modifier = Modifier.background(Color.Yellow),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+
+
+            ) {
                 container.children.forEach { child ->
                     BuildMenuContainer(child, onElementClick, textColor)
                 }
@@ -146,3 +162,37 @@ fun BuildMenuContainer(
     }
 }
 /*********************************************************/
+@Composable
+fun BuildMenuContainer(
+    container: MenuContainer,
+    onElementClick: (MenuElement) -> Unit,
+    textColor: Color,
+    parentAlignment: Alignment.Horizontal = Alignment.CenterHorizontally // Alignement hérité
+) {
+    when (container) {
+        is MenuContainer.ColumnContainer -> {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+               // verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = parentAlignment // Hérite de l'alignement du parent
+            ) {
+                container.children.forEach { child ->
+                    BuildMenuContainer(child, onElementClick, textColor, parentAlignment)
+                }
+            }
+        }
+        is MenuContainer.RowContainer -> {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                container.children.forEach { child ->
+                    BuildMenuContainer(child, onElementClick, textColor)
+                }
+            }
+        }
+        is MenuContainer.SingleItem -> {
+            MenuElementComposable(container.element, onElementClick, textColor)
+        }
+    }
+}
