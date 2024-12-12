@@ -19,6 +19,7 @@ sealed class MenuElement {
 
     data class IconItem(
         val icon: ImageVector,
+        val color: Color,
         val contentDescription: String?,
         val isClickable: Boolean = false
     ) : MenuElement()

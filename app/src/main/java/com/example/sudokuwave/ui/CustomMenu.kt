@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.sudokuwave.MainActivity.MenuConfig
@@ -24,7 +26,8 @@ fun CustomMenu(
         modifier = Modifier
             .fillMaxWidth()
             .background(config.style.backgroundColor)
-            .padding(config.style.padding)
+            .padding(4.dp,2.dp,4.dp,0.dp)
+        //    .padding(config.style.padding)
     ) {
         // Section Gauche
         Row(
@@ -33,7 +36,7 @@ fun CustomMenu(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-           // val alignment: AlignmentType= AlignmentType.Start
+            // val alignment: AlignmentType= AlignmentType.Start
             BuildMenuContainer(
                 container = config.leftContent,
                 onElementClick = onElementClick,
@@ -76,7 +79,6 @@ fun CustomMenu(
 }
 
 
-
 @Composable
 fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, textColor: Color) {
     when (element) {
@@ -92,12 +94,24 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
         }
 
         is MenuElement.IconItem -> {
-            IconButton(onClick = { if (element.isClickable) onClick(element) }) {
-                Icon(
-                    imageVector = element.icon,
-                    contentDescription = element.contentDescription,
-                    tint = textColor
-                )
+            Box(
+                modifier = Modifier
+                    .size(32.dp) // Taille du conteneur alignée aux autres éléments
+                    .background(Color.Transparent,
+                        shape = CircleShape) // Permet de visualiser l'espace utilisé
+                    ,
+                contentAlignment = Alignment.Center // Centre l'icône dans la Box
+            ) {
+                IconButton(
+                   // modifier = Modifier.padding(0.dp),
+                    onClick = { if (element.isClickable) onClick(element) }) {
+                    Icon(
+                        modifier = Modifier.size(28.dp),
+                        imageVector = element.icon,
+                        contentDescription = element.contentDescription,
+                        tint = element.color
+                    )
+                }
             }
         }
 
@@ -106,7 +120,8 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
                 painter = painterResource(id = element.imageRes),
                 contentDescription = element.contentDescription,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(36.dp)
+                    .padding(4.dp)
                     .clickable(enabled = element.isClickable) { onClick(element) }
             )
         }
@@ -128,52 +143,19 @@ fun MenuElementComposable(element: MenuElement, onClick: (MenuElement) -> Unit, 
     }
 }
 
-@Composable
-fun BuildMenuContainer2(
-    container: MenuContainer,
-    onElementClick: (MenuElement) -> Unit,
-    textColor: Color
-) {
-    when (container) {
-        is MenuContainer.SingleItem -> {
-            MenuElementComposable(container.element, onElementClick, textColor)
-        }
-
-        is MenuContainer.RowContainer -> {
-            Row(modifier = Modifier.background(Color.Red),)
-            {
-                container.children.forEach { child ->
-                    BuildMenuContainer(child, onElementClick, textColor)
-                }
-            }
-        }
-
-        is MenuContainer.ColumnContainer -> {
-            Column(modifier = Modifier.background(Color.Yellow),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-
-
-            ) {
-                container.children.forEach { child ->
-                    BuildMenuContainer(child, onElementClick, textColor)
-                }
-            }
-        }
-    }
-}
 /*********************************************************/
 @Composable
 fun BuildMenuContainer(
     container: MenuContainer,
     onElementClick: (MenuElement) -> Unit,
     textColor: Color,
-    parentAlignment: Alignment.Horizontal = Alignment.CenterHorizontally // Alignement hérité
+    parentAlignment: Alignment.Horizontal // Alignement hérité
 ) {
     when (container) {
         is MenuContainer.ColumnContainer -> {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-               // verticalArrangement = Arrangement.spacedBy(8.dp),
+                // verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = parentAlignment // Hérite de l'alignement du parent
             ) {
                 container.children.forEach { child ->
@@ -181,18 +163,29 @@ fun BuildMenuContainer(
                 }
             }
         }
+
         is MenuContainer.RowContainer -> {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = alignmentToArrangement(parentAlignment)
             ) {
                 container.children.forEach { child ->
-                    BuildMenuContainer(child, onElementClick, textColor)
+                    BuildMenuContainer(child, onElementClick, textColor, parentAlignment)
                 }
             }
         }
+
         is MenuContainer.SingleItem -> {
             MenuElementComposable(container.element, onElementClick, textColor)
         }
+    }
+}
+
+fun alignmentToArrangement(alignment: Alignment.Horizontal): Arrangement.Horizontal {
+    return when (alignment) {
+        Alignment.Start -> Arrangement.Start
+        Alignment.CenterHorizontally -> Arrangement.Center
+        Alignment.End -> Arrangement.End
+        else -> Arrangement.Start // Défaut au cas improbable
     }
 }
