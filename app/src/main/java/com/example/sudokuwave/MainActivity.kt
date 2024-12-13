@@ -1,4 +1,3 @@
-// MainActivity.kt
 package com.example.sudokuwave
 
 import android.content.Context
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +38,7 @@ import viewmodel.SharedViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    var nomApp: String = "Le Sudoku"
+    //    var nomApp: String = "Le Sudoku"
     var userNumber: String = "Nobody"
 
     private val sharedViewModel: SharedViewModel by viewModels()
@@ -50,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
-            val coroutineScope = rememberCoroutineScope()
+            //val coroutineScope = rememberCoroutineScope()
 
             SudokuWaveTheme {
                 Scaffold(
@@ -73,23 +71,22 @@ class MainActivity : AppCompatActivity() {
                             .background(color = Color.Gray)
                             .padding(innerPadding)
                     ) {
-                        val context = LocalContext.current
+                        // val context = LocalContext.current
                         CustomMenu(
-    config = currentMenuConfig.value,
-    onElementClick = { element, actionKey -> // Access actionKey here
-        actionKey?.let { actionKey ->
-            handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
-                currentMenuConfig.value = newMenu
-            }
-        }
-    },
-    onAction = { actionKey ->
-        handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
-            currentMenuConfig.value = newMenu
-        }
-    }
-)
-
+                            config = currentMenuConfig.value,
+                            onElementClick = { element, actionKey -> // Access actionKey here
+                                actionKey?.let { actionKey ->
+                                    handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+                                        currentMenuConfig.value = newMenu
+                                    }
+                                }
+                            },
+                            onAction = { actionKey ->
+                                handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+                                    currentMenuConfig.value = newMenu
+                                }
+                            }
+                        )
 
 
                         // Contenu principal
@@ -142,18 +139,21 @@ class MainActivity : AppCompatActivity() {
                     snackbarHostState.showSnackbar("Clicked: ${element.text}")
                 }
             }
+
             is MenuElement.IconItem -> {
                 Log.d("Menu Click", "Icon clicked: ${element.contentDescription}")
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Icon clicked: ${element.contentDescription}")
                 }
             }
+
             is MenuElement.ButtonItem -> {
                 element.onClick.invoke()
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Button clicked: ${element.text}")
                 }
             }
+
             else -> {
                 Log.d("Menu Click", "Unknown element clicked: ${element::class.simpleName}")
             }
@@ -190,12 +190,10 @@ class MainActivity : AppCompatActivity() {
 
                 updateMenu(getMenuConfig("Settings"))
             }
+
             else -> Log.w("MenuAction", "Unknown actionKey: $actionKey")
         }
     }
-
-
-
 
 
 }

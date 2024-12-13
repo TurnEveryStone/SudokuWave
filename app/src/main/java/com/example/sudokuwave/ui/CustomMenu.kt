@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 
-
 @Composable
 fun CustomMenu(
     config: MenuConfig,
@@ -131,7 +130,7 @@ fun MenuElementComposable(
                 modifier = Modifier
                     .padding(4.dp)
                     .clickable(enabled = element.isClickable) {
-                        onClick(element)
+                        onClick(element, element.actionKey)
                         element.actionKey?.let(onAction) // Déclencher l'action si présente
                     }
             )
@@ -139,11 +138,13 @@ fun MenuElementComposable(
 
         is MenuElement.IconItem -> {
             Box(
-                modifier = Modifier.size(32.dp).background(Color.Transparent, shape = CircleShape),
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(Color.Transparent, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 IconButton(onClick = {
-                    if (element.isClickable) onClick(element)
+                    if (element.isClickable) onClick(element, element.actionKey)
                     element.actionKey?.let(onAction)
                 }) {
                     Icon(
@@ -155,20 +156,28 @@ fun MenuElementComposable(
                 }
             }
         }
+
         is MenuElement.ImageItem -> {
             Image(
                 painter = painterResource(id = element.imageRes),
                 contentDescription = element.contentDescription,
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable(enabled = element.isClickable) { onClick(element) }
+                    .clickable(enabled = element.isClickable) {
+                        onClick(
+                            element,
+                            element.actionKey
+                        )
+                    }
             )
         }
+
         is MenuElement.ButtonItem -> {
             Button(onClick = element.onClick) {
                 Text(text = element.text, color = textColor)
             }
         }
+
         is MenuElement.CheckboxItem -> {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

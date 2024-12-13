@@ -8,9 +8,11 @@ sealed class MenuContainer {
     data class SingleItem(
         val element: MenuElement
     ) : MenuContainer()
+
     data class RowContainer(val children: List<MenuContainer>) : MenuContainer()
     data class ColumnContainer(val children: List<MenuContainer>) : MenuContainer()
 }
+
 sealed class MenuElement {
     data class TextItem(
         val text: String,
@@ -22,14 +24,14 @@ sealed class MenuElement {
     data class IconItem(
         val icon: ImageVector,
         val color: Color,
-        val contentDescription: String?=null,
+        val contentDescription: String? = null,
         val isClickable: Boolean = false,
         val actionKey: String? = null
     ) : MenuElement()
 
     data class ImageItem(
         val imageRes: Int,
-        val contentDescription: String?=null,
+        val contentDescription: String? = null,
         val isClickable: Boolean = false,
         val actionKey: String? = null
     ) : MenuElement()
@@ -39,6 +41,7 @@ sealed class MenuElement {
         val onClick: () -> Unit,
         val actionKey: String? = null
     ) : MenuElement()
+
     data class CheckboxItem(
         val text: String,
         val isChecked: Boolean,
