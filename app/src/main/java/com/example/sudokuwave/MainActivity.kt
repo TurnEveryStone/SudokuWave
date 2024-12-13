@@ -75,21 +75,20 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         val context = LocalContext.current
                         CustomMenu(
-                            config = currentMenuConfig.value, // Passe explicitement la configuration
-                            onElementClick = { element: MenuElement ->
-                                element.actionKey?.let { actionKey ->
-                                    handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
-                                        currentMenuConfig.value = newMenu
-                                    }
-                                }
-                            }
-                            ,
-                            onAction = { actionKey ->
-                                handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
-                                    currentMenuConfig.value = newMenu
-                                }
-                            }
-                        )
+    config = currentMenuConfig.value,
+    onElementClick = { element, actionKey -> // Access actionKey here
+        actionKey?.let { actionKey ->
+            handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+                currentMenuConfig.value = newMenu
+            }
+        }
+    },
+    onAction = { actionKey ->
+        handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+            currentMenuConfig.value = newMenu
+        }
+    }
+)
 
 
 

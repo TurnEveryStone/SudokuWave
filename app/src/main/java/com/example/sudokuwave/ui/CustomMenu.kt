@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomMenu(
     config: MenuConfig,
-    onElementClick: (MenuElement) -> Unit,
+    onElementClick: (MenuElement, String?) -> Unit, // Add actionKey parameter
     onAction: (String) -> Unit
 ) {
     Row(
@@ -77,7 +77,7 @@ fun CustomMenu(
 @Composable
 fun BuildMenuContainer(
     container: MenuContainer,
-    onElementClick: (MenuElement) -> Unit,
+    onElementClick: (MenuElement, String?) -> Unit,
     textColor: Color,
     parentAlignment: Alignment.Horizontal,
     onAction: (String) -> Unit // Ajouter ce paramètre
@@ -119,7 +119,7 @@ fun BuildMenuContainer(
 @Composable
 fun MenuElementComposable(
     element: MenuElement,
-    onClick: (MenuElement) -> Unit,
+    onClick: (MenuElement, String?) -> Unit,
     textColor: Color,
     onAction: (String) -> Unit // Ajouter ce paramètre
 ) {
