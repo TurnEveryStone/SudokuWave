@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Sudoku_Wave.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-12T08:38:25.421860900Z">
+        <DropdownSelection timestamp="2024-12-12T08:47:55.012320900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pauls\.android\avd\Small_Phone_API_26.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pauls\.android\avd\Pixel_9_Pro_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
