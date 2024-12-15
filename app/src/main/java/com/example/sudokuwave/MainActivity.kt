@@ -38,7 +38,7 @@ import viewmodel.SharedViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    //    var nomApp: String = "Le Sudoku"
+    val nomApp: String = "Le Sudoku"
     var userNumber: String = "Nobody"
 
     private val sharedViewModel: SharedViewModel by viewModels()

@@ -56,15 +56,34 @@ fun getMenuConfig(menu: String): MenuConfig {
                     listOf(
                         MenuContainer.SingleItem(
                             MenuElement.TextItem(
-                                "AppName",
+                                "Le Sudoku",
                                 style = TextStyle(
                                     fontFamily = FontFamily.Cursive,
                                     fontStyle = FontStyle.Italic,
-                                    fontSize = 22.sp
+                                    fontSize = 24.sp
                                 )
                             )
                         ),
-                        MenuContainer.SingleItem(MenuElement.TextItem("Center Line 2"))
+                        MenuContainer.SingleItem(
+                            MenuElement.ButtonItem(
+                                text = "Inviter des amis",
+                                onClick = { /* Action à réaliser */ },
+                                actionKey = "GoToAdvancedSettings",
+                                style = ButtonStyle(
+                                    backgroundColor = Color.DarkGray, // Fond du bouton
+                                    textColor = Color.White, // Couleur du texte
+                                    padding = PaddingValues(0.dp, 0.dp, 0.dp, 2.dp), // Espacement
+                                    textStyle = TextStyle(
+                                        fontFamily = FontFamily.Serif,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    width = 180.dp, // Largeur du bouton
+                                    height = 25.dp // Hauteur du bouton
+                                )
+                            )
+
+                        )
                     )
                 ),
                 rightContent = MenuContainer.ColumnContainer(
@@ -86,7 +105,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                         color = Color.DarkGray,
                                         contentDescription = "Settings",
                                         isClickable = true,
-                                        actionKey = "GoToAdvancedSettings"
+                                        actionKey = "GoToSettings"
                                     )
                                 )
                             )

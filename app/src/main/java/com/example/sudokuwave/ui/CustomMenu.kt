@@ -173,10 +173,24 @@ fun MenuElementComposable(
         }
 
         is MenuElement.ButtonItem -> {
-            Button(onClick = element.onClick) {
-                Text(text = element.text, color = textColor)
+            Button(
+                onClick = element.onClick,
+                modifier = Modifier
+                    .padding(element.style.padding)
+                    .size(element.style.width, element.style.height), // Définit les dimensions
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = element.style.backgroundColor // Couleur de fond du bouton
+                )
+            ) {
+                Text(
+                    text = element.text,
+                    color = element.style.textColor,
+                    style = element.style.textStyle
+                )
             }
         }
+
+
 
         is MenuElement.CheckboxItem -> {
             Row(

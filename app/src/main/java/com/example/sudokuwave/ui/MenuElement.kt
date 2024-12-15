@@ -1,8 +1,21 @@
 package com.example.sudokuwave.ui
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+data class ButtonStyle(
+    val backgroundColor: Color = Color.Unspecified,
+    val textColor: Color = Color.Black,
+    val padding: PaddingValues = PaddingValues(8.dp),
+    val textStyle: TextStyle = TextStyle.Default,
+    val width: Dp = Dp.Unspecified, // Largeur du bouton
+    val height: Dp = Dp.Unspecified // Hauteur du bouton
+)
+
 
 sealed class MenuContainer {
     data class SingleItem(
@@ -38,6 +51,7 @@ sealed class MenuElement {
 
     data class ButtonItem(
         val text: String,
+        val style: ButtonStyle = ButtonStyle(),
         val onClick: () -> Unit,
         val actionKey: String? = null
     ) : MenuElement()
