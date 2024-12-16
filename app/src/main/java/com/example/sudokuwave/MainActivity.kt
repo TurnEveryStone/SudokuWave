@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.sudokuwave.ui.CustomMenu
@@ -35,7 +36,7 @@ import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import viewmodel.SharedViewModel
-
+/*****************************************/
 class MainActivity : AppCompatActivity() {
 
     val nomApp: String = "Le Sudoku"
@@ -71,7 +72,8 @@ class MainActivity : AppCompatActivity() {
                             .background(color = Color.Gray)
                             .padding(innerPadding)
                     ) {
-                        // val context = LocalContext.current
+
+                        val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
                         CustomMenu(
                             config = currentMenuConfig.value,
                             onElementClick = { element, actionKey -> // Access actionKey here
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    /*****************************************/
     @Composable
     fun FragmentContainerComposable() {
         val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager
@@ -119,13 +121,13 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
-
+/*****************************************/
     @Composable
     fun ObserveViewModel(sharedViewModel: SharedViewModel) {
         val value = sharedViewModel.stateFlowVariable.collectAsState().value
         Text(text = "La variable StateFlow a changé : $value")
     }
-
+/*****************************************/
     private fun handleMenuClick(
         element: MenuElement,
         context: Context,
@@ -159,41 +161,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    /**
-     * Handles actions triggered by menu interactions.
-     *
-     * @param actionKey A string representing the action to perform.
-     * @param fragmentManager The FragmentManager used to manage fragment transactions.
-     * @param updateMenu A function to update the current menu configuration.
-     *
-     * Actions can include:
-     * - "EnableNotifications": Logs a message for enabling notifications.
-     * - "ToggleDarkMode": Logs a message for toggling dark mode.
-     * - "GoToSettings": Replaces the current fragment with a SettingsFragment and updates the menu.
-     * - Default: Logs a warning for unknown action keys.
-     */
-
-    fun handleMenuAction(
-        actionKey: String,
-        fragmentManager: FragmentManager,
-        updateMenu: (MenuConfig) -> Unit
-    ) {
-        when (actionKey) {
-            "EnableNotifications" -> Log.d("MenuAction", "Notifications toggled")
-            "ToggleDarkMode" -> Log.d("MenuAction", "Dark Mode toggled")
-            "GoToSettings" -> {
-                fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, SettingsFragment())
-                    .addToBackStack(null)
-                    .commit()
-
-                updateMenu(getMenuConfig("Settings"))
-            }
-
-            else -> Log.w("MenuAction", "Unknown actionKey: $actionKey")
-        }
+/*****************************************/
+fun handleMenuAction(actionKey: String, containerId: Int, fragmentManager: FragmentManager) {
+    when (actionKey) {
+        "GoToSettings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
+        "GoToProfile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager)
+        else -> Log.d("MenuAction", "Unknown action: $actionKey")
     }
+}
 
+
+/*****************************************/
+    fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager) {
+        fragmentManager.beginTransaction()
+            .replace(containerId, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+/****************************************/
 
 }
