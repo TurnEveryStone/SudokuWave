@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                             .padding(innerPadding)
                     ) {
 
-                        val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
+                        //val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
                         CustomMenu(
                             config = currentMenuConfig.value,
                             onElementClick = { element, actionKey -> // Access actionKey here
