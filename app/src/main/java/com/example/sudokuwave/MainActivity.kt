@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     val nomApp: String = "Le Sudoku"
     var userNumber: String = "Nobody"
-
+    private val containerId =  View.generateViewId()
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                      * on user preferences or app state.
                      */
                     val currentMenuConfig = remember { mutableStateOf(getMenuConfig("Home")) }
-
+                    val containerId = remember { View.generateViewId() }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -73,18 +73,19 @@ class MainActivity : AppCompatActivity() {
                             .padding(innerPadding)
                     ) {
 
+                        val fragmentManager = supportFragmentManager
                         //val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
                         CustomMenu(
                             config = currentMenuConfig.value,
                             onElementClick = { element, actionKey -> // Access actionKey here
                                 actionKey?.let { actionKey ->
-                                    handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+                                    handleMenuAction(actionKey,containerId, fragmentManager) { newMenu ->
                                         currentMenuConfig.value = newMenu
                                     }
                                 }
                             },
                             onAction = { actionKey ->
-                                handleMenuAction(actionKey, supportFragmentManager) { newMenu ->
+                                handleMenuAction(actionKey,containerId, fragmentManager) { newMenu ->
                                     currentMenuConfig.value = newMenu
                                 }
                             }
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
                         // Contenu principal
                         Text(text = "Hello $userNumber")
-                        FragmentContainerComposable()
+                        FragmentContainerComposable(containerId)
                         ObserveViewModel(sharedViewModel)
                     }
                 }
@@ -102,9 +103,9 @@ class MainActivity : AppCompatActivity() {
     }
     /*****************************************/
     @Composable
-    fun FragmentContainerComposable() {
+    fun FragmentContainerComposable(containerId: Int) {
         val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager
-        val containerId = remember { View.generateViewId() }
+       // containerId = remember { View.generateViewId() }
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
@@ -162,9 +163,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 /*****************************************/
-fun handleMenuAction(actionKey: String, containerId: Int, fragmentManager: FragmentManager) {
+fun handleMenuAction(actionKey: String, containerId: Int, fragmentManager: FragmentManager,
+                     updateMenu: (MenuConfig) -> Unit) {
     when (actionKey) {
-        "GoToSettings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
+        "Settings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
+                 //  updateMenu(getMenuConfig(actionKey))
+
         "GoToProfile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager)
         else -> Log.d("MenuAction", "Unknown action: $actionKey")
     }

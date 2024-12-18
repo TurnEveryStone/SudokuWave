@@ -47,7 +47,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                 color = Color.Blue,
                                 contentDescription = "Person",
                                 isClickable = true,
-                                actionKey = "GoToAdvancedSettings"
+                                actionKey = "Settings"
                             )
                         )
                     )
@@ -96,7 +96,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                         color = Color.DarkGray,
                                         contentDescription = "Basket",
                                         isClickable = true,
-                                        actionKey = "GoToAdvancedSettings"
+                                        actionKey = "Settings"
                                     )
                                 ),
                                 MenuContainer.SingleItem(
@@ -105,7 +105,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                         color = Color.DarkGray,
                                         contentDescription = "Settings",
                                         isClickable = true,
-                                        actionKey = "GoToSettings"
+                                        actionKey = "Settings"
                                     )
                                 )
                             )
