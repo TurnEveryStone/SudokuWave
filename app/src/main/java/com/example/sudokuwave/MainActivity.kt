@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
             //val coroutineScope = rememberCoroutineScope()
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color = Color.Gray)
+                            .background(color = Color.Transparent)
                             .padding(innerPadding)
                     ) {
 
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
 
                         // Contenu principal
-                        Text(text = "Hello $userNumber")
+                       // Text(text = "Hello $userNumber")
                         FragmentContainerComposable(containerId)
                         ObserveViewModel(sharedViewModel)
                     }
@@ -163,18 +164,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 /*****************************************/
-fun handleMenuAction(actionKey: String, containerId: Int, fragmentManager: FragmentManager,
-                     updateMenu: (MenuConfig) -> Unit) {
-    when (actionKey) {
-        "Settings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
-                 //  updateMenu(getMenuConfig(actionKey))
+fun handleMenuAction(
+    actionKey: String,
+    containerId: Int,
+    fragmentManager: FragmentManager,
+    updateMenu: (MenuConfig) -> Unit
+) {
+    val fragment = when (actionKey) {
+        "Settings" -> SettingsFragment()
+        "Profile" -> ProfileFragment()
+        else -> null
+    }
 
-        "GoToProfile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager)
-        else -> Log.d("MenuAction", "Unknown action: $actionKey")
+    if (fragment != null) {
+        replaceFragment(containerId, fragment, fragmentManager)
+        updateMenu(getMenuConfig(actionKey))
+    } else {
+        Log.d("MenuAction", "Unknown action: $actionKey")
     }
 }
-
-
 /*****************************************/
     fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager) {
         fragmentManager.beginTransaction()

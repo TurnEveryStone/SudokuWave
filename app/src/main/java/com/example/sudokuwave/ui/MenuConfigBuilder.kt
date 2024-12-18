@@ -32,6 +32,8 @@ data class MenuConfig(
 
 fun getMenuConfig(menu: String): MenuConfig {
     return when (menu) {
+        "Profile",
+        "Settings",
         "Home" -> {
             MenuConfig(
                 style = MenuStyle(
@@ -47,7 +49,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                 color = Color.Blue,
                                 contentDescription = "Person",
                                 isClickable = true,
-                                actionKey = "Settings"
+                                actionKey = "Profile"
                             )
                         )
                     )
@@ -68,7 +70,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                             MenuElement.ButtonItem(
                                 text = "Inviter des amis",
                                 onClick = { /* Action à réaliser */ },
-                                actionKey = "GoToAdvancedSettings",
+                                actionKey = "Settings",
                                 style = ButtonStyle(
                                     backgroundColor = Color.DarkGray, // Fond du bouton
                                     textColor = Color.White, // Couleur du texte
@@ -116,7 +118,7 @@ fun getMenuConfig(menu: String): MenuConfig {
         }
 
 
-        "Settings" -> {
+        "Settings2" -> {
             MenuConfig(
                 style = MenuStyle(
                     backgroundColor = Color.LightGray,
