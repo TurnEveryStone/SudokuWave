@@ -1,6 +1,7 @@
 package com.example.sudokuwave.ui
 
 
+import android.R.attr.checked
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -219,6 +220,7 @@ fun MenuElementComposable(
                     onCheckedChange = { isChecked ->
                         element.onCheckedChange(isChecked)
                         element.actionKey?.let(onAction)
+
                     }
                 )
             }

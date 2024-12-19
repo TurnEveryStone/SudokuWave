@@ -28,6 +28,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModel
 import com.example.sudokuwave.ui.CustomMenu
 import com.example.sudokuwave.ui.MenuConfig
 import com.example.sudokuwave.ui.MenuElement
@@ -36,77 +37,107 @@ import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import viewmodel.SharedViewModel
+
 /*****************************************/
 class MainActivity : AppCompatActivity() {
+    class MainActivityViewModel : ViewModel() {
+        var currentFragmentTag: String = "HomeFragment"
+        var currentMenuConfig: MenuConfig = getMenuConfig("Home")
+        private val menuStack = mutableListOf<MenuConfig>()
 
+        fun pushMenu(menuConfig: MenuConfig) {
+            menuStack.add(menuConfig)
+        }
+
+        fun popMenu(): MenuConfig? {
+            return if (menuStack.isNotEmpty()) menuStack.removeAt(menuStack.size - 1) else null
+        }
+    }
+
+    val viewModel: MainActivityViewModel by viewModels()
     val nomApp: String = "Le Sudoku"
     var userNumber: String = "Nobody"
-    private val containerId =  View.generateViewId()
+    private val containerId = View.generateViewId()
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (savedInstanceState == null) {
+            // Pas d'état sauvegardé, charger le fragment initial
 
-        setContent {
-            val snackbarHostState = remember { SnackbarHostState() }
-            //val coroutineScope = rememberCoroutineScope()
+            setContent {
+                val snackbarHostState = remember { SnackbarHostState() }
+                //val coroutineScope = rememberCoroutineScope()
 
-            SudokuWaveTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-                ) { innerPadding ->
+                SudokuWaveTheme {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                    ) { innerPadding ->
 
-                    /**
-                     * Initialize the current menu configuration.
-                     * "Home" is used as the default configuration because it represents
-                     * the main entry point of the application. This can be parameterized
-                     * in the future to allow dynamic selection of the initial menu based
-                     * on user preferences or app state.
-                     */
-                    val currentMenuConfig = remember { mutableStateOf(getMenuConfig("Home")) }
-                    val containerId = remember { View.generateViewId() }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = Color.Transparent)
-                            .padding(innerPadding)
-                    ) {
+                        /**
+                         * Initialize the current menu configuration.
+                         * "Home" is used as the default configuration because it represents
+                         * the main entry point of the application. This can be parameterized
+                         * in the future to allow dynamic selection of the initial menu based
+                         * on user preferences or app state.
+                         */
+                        val currentMenuConfig = remember { mutableStateOf(getMenuConfig("Home")) }
+                        val containerId = remember { View.generateViewId() }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = Color.Transparent)
+                                .padding(innerPadding)
+                        ) {
 
-                        val fragmentManager = supportFragmentManager
-                        //val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
-                        CustomMenu(
-                            config = currentMenuConfig.value,
-                            onElementClick = { element, actionKey -> // Access actionKey here
-                                actionKey?.let { actionKey ->
-                                    handleMenuAction(actionKey,containerId, fragmentManager) { newMenu ->
+                            val fragmentManager = supportFragmentManager
+                            //val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
+                            CustomMenu(
+                                config = currentMenuConfig.value,
+                                onElementClick = { element, actionKey -> // Access actionKey here
+                                    actionKey?.let { actionKey ->
+                                        handleMenuAction(
+                                            actionKey,
+                                            containerId,
+                                            fragmentManager
+                                        ) { newMenu ->
+                                            currentMenuConfig.value = newMenu
+                                        }
+                                    }
+                                },
+                                onAction = { actionKey ->
+                                    handleMenuAction(
+                                        actionKey,
+                                        containerId,
+                                        fragmentManager
+                                    ) { newMenu ->
                                         currentMenuConfig.value = newMenu
                                     }
                                 }
-                            },
-                            onAction = { actionKey ->
-                                handleMenuAction(actionKey,containerId, fragmentManager) { newMenu ->
-                                    currentMenuConfig.value = newMenu
-                                }
-                            }
-                        )
+                            )
 
 
-                        // Contenu principal
-                       // Text(text = "Hello $userNumber")
-                        FragmentContainerComposable(containerId)
-                        ObserveViewModel(sharedViewModel)
+                            // Contenu principal
+                            // Text(text = "Hello $userNumber")
+                            FragmentContainerComposable(containerId)
+                            ObserveViewModel(sharedViewModel)
+                        }
                     }
                 }
             }
+        } else {
+            // État sauvegardé : le fragment actuel est déjà restauré automatiquement par Android
+            supportFragmentManager.executePendingTransactions()
         }
     }
+
     /*****************************************/
     @Composable
     fun FragmentContainerComposable(containerId: Int) {
         val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager
-       // containerId = remember { View.generateViewId() }
+        // containerId = remember { View.generateViewId() }
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
@@ -123,13 +154,15 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
-/*****************************************/
+
+    /*****************************************/
     @Composable
     fun ObserveViewModel(sharedViewModel: SharedViewModel) {
         val value = sharedViewModel.stateFlowVariable.collectAsState().value
         Text(text = "La variable StateFlow a changé : $value")
     }
-/*****************************************/
+
+    /*****************************************/
     private fun handleMenuClick(
         element: MenuElement,
         context: Context,
@@ -163,33 +196,61 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-/*****************************************/
-fun handleMenuAction(
-    actionKey: String,
-    containerId: Int,
-    fragmentManager: FragmentManager,
-    updateMenu: (MenuConfig) -> Unit
-) {
-    val fragment = when (actionKey) {
-        "Settings" -> SettingsFragment()
-        "Profile" -> ProfileFragment()
-        else -> null
+
+    /*****************************************/
+    fun handleMenuAction(
+        actionKey: String,
+        containerId: Int,
+        fragmentManager: FragmentManager,
+        updateMenu: (MenuConfig) -> Unit
+    ) {
+        val newMenuConfig = getMenuConfig(actionKey)
+
+
+
+        // Vérifiez si le menu est déjà actif
+        if (viewModel.currentMenuConfig == newMenuConfig) {
+            return // Ne pas réagir si le menu est déjà actif
+        }
+
+        viewModel.pushMenu(viewModel.currentMenuConfig) // Sauvegarde le menu actuel
+        viewModel.currentMenuConfig = newMenuConfig
+
+        when (actionKey) {
+            "Settings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
+            "Profile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager)
+            else -> Log.d("MenuAction", "Unknown action: $actionKey")
+        }
+
+        updateMenu(newMenuConfig)
     }
 
-    if (fragment != null) {
-        replaceFragment(containerId, fragment, fragmentManager)
-        updateMenu(getMenuConfig(actionKey))
-    } else {
-        Log.d("MenuAction", "Unknown action: $actionKey")
-    }
-}
-/*****************************************/
+    /*****************************************/
     fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager) {
+        val currentFragment = fragmentManager.findFragmentById(containerId)
+        if (currentFragment?.javaClass == fragment.javaClass) {
+            // Le fragment est déjà affiché, ne pas l'ajouter à nouveau
+            return
+        }
         fragmentManager.beginTransaction()
             .replace(containerId, fragment)
             .addToBackStack(null)
             .commit()
     }
-/****************************************/
 
+    /*****************************************/
+    override fun onBackPressed() {
+        val fragmentManager = supportFragmentManager
+
+        if (fragmentManager.backStackEntryCount > 0) {
+            fragmentManager.popBackStack() // Retour au fragment précédent
+            val previousMenu = viewModel.popMenu() // Récupère le menu précédent
+            if (previousMenu != null) {
+                viewModel.currentMenuConfig = previousMenu
+            }
+        } else {
+            super.onBackPressed() // Quitte l'activité
+        }
+    }
+    /****************************************/
 }
