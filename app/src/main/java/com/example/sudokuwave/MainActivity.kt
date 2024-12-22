@@ -37,7 +37,7 @@ import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import viewmodel.SharedViewModel
-
+import androidx.activity.OnBackPressedCallback
 /*****************************************/
 class MainActivity : AppCompatActivity() {
     class MainActivityViewModel : ViewModel() {
@@ -62,7 +62,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleCustomBackPressed()
+            }
+        })
+
+
+
         enableEdgeToEdge()
+
+
+
         if (savedInstanceState == null) {
             // Pas d'état sauvegardé, charger le fragment initial
 
@@ -217,8 +230,8 @@ class MainActivity : AppCompatActivity() {
         viewModel.currentMenuConfig = newMenuConfig
 
         when (actionKey) {
-            "Settings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager)
-            "Profile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager)
+            "Settings" -> replaceFragment(containerId, SettingsFragment(), fragmentManager,actionKey)
+            "Profile" -> replaceFragment(containerId, ProfileFragment(), fragmentManager,actionKey)
             else -> Log.d("MenuAction", "Unknown action: $actionKey")
         }
 
@@ -226,20 +239,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*****************************************/
-    fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager) {
+   fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager, tag: String)
+    {
         val currentFragment = fragmentManager.findFragmentById(containerId)
-        if (currentFragment?.javaClass == fragment.javaClass) {
-            // Le fragment est déjà affiché, ne pas l'ajouter à nouveau
+        // Vérifiez si le fragment actuel est du même type que le nouveau fragment
+        if (currentFragment != null && currentFragment::class == fragment::class) {
+            // Si c'est le même type de fragment, ne faites rien pour éviter les doublons
             return
         }
+        // Sinon, remplacez le fragment et ajoutez-le à la pile arrière
         fragmentManager.beginTransaction()
-            .replace(containerId, fragment)
-            .addToBackStack(null)
+            .replace(containerId, fragment, tag)
+            .addToBackStack(tag)
             .commit()
     }
 
     /*****************************************/
-    override fun onBackPressed() {
+//    override fun onBackPressed() {
+//        val fragmentManager = supportFragmentManager
+//
+//        if (fragmentManager.backStackEntryCount > 0) {
+//            fragmentManager.popBackStack() // Retour au fragment précédent
+//            val previousMenu = viewModel.popMenu() // Récupère le menu précédent
+//            if (previousMenu != null) {
+//                viewModel.currentMenuConfig = previousMenu
+//            }
+//        } else {
+//            super.onBackPressed() // Quitte l'activité
+//        }
+//    }
+    /****************************************/
+    private fun handleCustomBackPressed() {
         val fragmentManager = supportFragmentManager
 
         if (fragmentManager.backStackEntryCount > 0) {
@@ -249,7 +279,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.currentMenuConfig = previousMenu
             }
         } else {
-            super.onBackPressed() // Quitte l'activité
+            finish() // Quitte l'activité si aucun fragment n'est disponible
         }
     }
     /****************************************/
