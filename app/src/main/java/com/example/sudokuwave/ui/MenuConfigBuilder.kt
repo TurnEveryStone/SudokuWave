@@ -34,6 +34,7 @@ fun getMenuConfig(menu: String): MenuConfig {
     return when (menu) {
         "Profile",
         "Settings",
+            "Register",
         "Home" -> {
             MenuConfig(
                 style = MenuStyle(
@@ -69,8 +70,9 @@ fun getMenuConfig(menu: String): MenuConfig {
                         MenuContainer.SingleItem(
                             MenuElement.ButtonItem(
                                 text = "Inviter des amis",
-                                onClick = { /* Action à réaliser */ },
-                                actionKey = "Settings",
+                                isClickable = true,
+                                onClick = { println("Button clicked") },
+                                actionKey = "Register",
                                 style = ButtonStyle(
                                     backgroundColor = Color.DarkGray, // Fond du bouton
                                     textColor = Color.White, // Couleur du texte
@@ -80,7 +82,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold
                                     ),
-                                    width = 180.dp, // Largeur du bouton
+                                    //width = 180.dp, // Largeur du bouton
                                     height = 25.dp // Hauteur du bouton
                                 )
                             )
@@ -104,10 +106,10 @@ fun getMenuConfig(menu: String): MenuConfig {
                                 MenuContainer.SingleItem(
                                     MenuElement.IconItem(
                                         Icons.Default.Settings,
-                                        color = Color.DarkGray,
+                                        color = if(menu=="Settings")Color.Red else Color.DarkGray,
                                         contentDescription = "Settings",
-                                        isClickable = true,
-                                        actionKey = "Settings"
+                                        actionKey = "Settings",
+                                        isClickable = menu != "Settings"
                                     )
                                 )
                             )

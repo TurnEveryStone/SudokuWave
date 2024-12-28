@@ -174,8 +174,10 @@ fun MenuElementComposable(
         }
 
         is MenuElement.ButtonItem -> {
-            Button(
-                onClick = element.onClick,
+            Button(onClick = {
+                if (element.isClickable) onClick(element, element.actionKey)
+                element.actionKey?.let(onAction)
+            },
                 modifier = Modifier
                     .padding(element.style.padding)
                     .size(element.style.width, element.style.height), // Définit les dimensions

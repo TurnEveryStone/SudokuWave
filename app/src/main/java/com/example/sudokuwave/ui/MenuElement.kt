@@ -52,7 +52,8 @@ sealed class MenuElement {
     data class ButtonItem(
         val text: String,
         val style: ButtonStyle = ButtonStyle(),
-        val onClick: () -> Unit,
+        val isClickable: Boolean = false,
+       val onClick: () -> Unit,
         val actionKey: String? = null
     ) : MenuElement()
 
