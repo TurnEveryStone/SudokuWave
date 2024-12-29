@@ -31,10 +31,15 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModel
 import com.example.sudokuwave.ui.CustomMenu
 import com.example.sudokuwave.ui.MenuConfig
-import com.example.sudokuwave.RegisterFragment
 import com.example.sudokuwave.ui.getMenuConfig
 import com.example.sudokuwave.ui.theme.SudokuWaveTheme
 import viewmodel.SharedViewModel
+import androidx.activity.compose.setContent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.sudokuwave.tools.ThemeViewModel
 
 /*****************************************/
 class MainActivity : AppCompatActivity() {
@@ -42,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         //var currentFragmentTag: String = "HomeFragment"
         var currentMenuConfig: MenuConfig = getMenuConfig("Home")
         private val menuStack = mutableListOf<MenuConfig>()
+        val seletedMenuColor:Color=Color.Red
+        val unseletedMenuColor:Color=Color.DarkGray
 
         fun pushMenu(menuConfig: MenuConfig) {
 
@@ -80,9 +87,10 @@ class MainActivity : AppCompatActivity() {
             // Pas d'état sauvegardé, charger le fragment initial
 
             setContent {
+            //    val themeViewModel: ThemeViewModel = viewModel()
                 val snackbarHostState = remember { SnackbarHostState() }
                 //val coroutineScope = rememberCoroutineScope()
-
+           //     MyApp(themeViewModel)
                 SudokuWaveTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -242,4 +250,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
     /****************************************/
+    @Composable
+    fun MyApp(themeViewModel: ThemeViewModel) {
+        val selectedColor by themeViewModel.selectedMenuColor.observeAsState(R.color.default_selected_color)
+        val unselectedColor by themeViewModel.unselectedMenuColor.observeAsState(R.color.default_unselected_color)
+
+        MaterialTheme(
+            colorScheme = MaterialTheme.colorScheme.copy(
+                primary = Color(selectedColor),
+                secondary = Color(unselectedColor)
+            )
+        ) {
+            // Exemple de contenu
+            Column {
+                Text("Bonjour, Sudoku Wave !", color = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
+    /******************************************/
 }

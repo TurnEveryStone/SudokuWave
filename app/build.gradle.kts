@@ -57,6 +57,31 @@ dependencies {
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation (libs.androidx.runtime.livedata)
 
+//    implementation (libs.androidx.ui.v160)
+//    implementation (libs.androidx.material3.v160)
+//    implementation (libs.androidx.lifecycle.runtime.compose)
+//    implementation (libs.androidx.datastore.preferences)
+//    implementation (libs.retrofit)
+//    implementation (libs.converter.gson)
+
+
+
+    // Jetpack Compose
+    implementation (libs.androidx.compose.ui.ui.v152.x4) // Vérifiez la version la plus récente
+
+    // Compose ViewModel
+    implementation (libs.androidx.lifecycle.viewmodel.compose.v260) // Vérifiez la version la plus récente
+
+    // Autres dépendances utiles pour Compose (optionnelles selon vos besoins)
+    implementation (libs.androidx.material)
+    implementation (libs.ui.tooling)
+    implementation (libs.androidx.activity.compose.v172)
+
+
+
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

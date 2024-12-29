@@ -47,7 +47,7 @@ fun getMenuConfig(menu: String): MenuConfig {
                         MenuContainer.SingleItem(
                             MenuElement.IconItem(
                                 Icons.Default.Person,
-                                color = Color.Blue,
+                                color = Color.DarkGray,
                                 contentDescription = "Person",
                                 isClickable = true,
                                 actionKey = "Profile"
@@ -102,11 +102,11 @@ fun getMenuConfig(menu: String): MenuConfig {
                                         isClickable = true,
                                         actionKey = "Settings"
                                     )
-                                ),
+                                ), // TODO
                                 MenuContainer.SingleItem(
                                     MenuElement.IconItem(
                                         Icons.Default.Settings,
-                                        color = if(menu=="Settings")Color.Red else Color.DarkGray,
+                                        color = if(menu=="Settings")Color.LightGray else Color.DarkGray,
                                         contentDescription = "Settings",
                                         actionKey = "Settings",
                                         isClickable = menu != "Settings"
