@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel: MainActivityViewModel by viewModels()
     val nomApp: String = "Le Sudoku"
-  //  var userNumber: String = "Nobody"
-   // private val containerId = View.generateViewId()
+    //  var userNumber: String = "Nobody"
+    // private val containerId = View.generateViewId()
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,83 +87,18 @@ class MainActivity : AppCompatActivity() {
             // Pas d'état sauvegardé, charger le fragment initial
 
             setContent {
-            //    val themeViewModel: ThemeViewModel = viewModel()
+                    val themeViewModel: ThemeViewModel = viewModel()
                 val snackbarHostState = remember { SnackbarHostState() }
                 //val coroutineScope = rememberCoroutineScope()
-           //     MyApp(themeViewModel)
-                SudokuWaveTheme {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-                    ) { innerPadding ->
+                    MyApp(themeViewModel)
 
-                        /**
-                         * Initialize the current menu configuration.
-                         * "Home" is used as the default configuration because it represents
-                         * the main entry point of the application. This can be parameterized
-                         * in the future to allow dynamic selection of the initial menu based
-                         * on user preferences or app state.
-                         */
-                        val currentMenuConfig = remember { mutableStateOf(getMenuConfig("Home")) }
-                        val containerId = remember { View.generateViewId() }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = Color.Transparent)
-                                .padding(innerPadding)
-                        ) {
-                            val fragmentManager = supportFragmentManager
-                            //val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager //
-                            val handledActions = mutableSetOf<String>() // Ensemble des actions déjà traitées
-                            CustomMenu(
-                                config = currentMenuConfig.value,
-                                onElementClick = { element, actionKey ->
-                                    actionKey?.let { key ->
-                                        if (!handledActions.contains(key)) { // Vérifier si l'action est déjà traitée
-                                            handleMenuAction(
-                                                key,
-                                                containerId,
-                                                fragmentManager
-                                            ) { newMenu ->
-                                                currentMenuConfig.value = newMenu
-                                            }
-                                            handledActions.add(key) // Marquer comme traité
-                                        }
-                                    }
-                                },
-                                onAction = { actionKey ->
-                                    if (!handledActions.contains(actionKey)) { // Vérifier si l'action est déjà traitée
-                                        handleMenuAction(
-                                            actionKey,
-                                            containerId,
-                                            fragmentManager
-                                        ) { newMenu ->
-                                            currentMenuConfig.value = newMenu
-                                        }
-                                        actionKey.let { handledActions.add(it) } // Marquer comme traité
-                                    }
-                                }
-                            )
-
-// Réinitialiser l'ensemble à chaque cycle si nécessaire
-                            handledActions.clear()
-
-
-
-                            // Contenu principal
-                            // Text(text = "Hello $userNumber")
-                            FragmentContainerComposable(containerId)
-                            ObserveViewModel(sharedViewModel)
-                        }
-                    }
-                }
             }
         } else {
             // État sauvegardé : le fragment actuel est déjà restauré automatiquement par Android
             supportFragmentManager.executePendingTransactions()
         }
     }
-   /*****************************************/
+    /*****************************************/
     @Composable
     fun FragmentContainerComposable(containerId: Int) {
         val fragmentManager = (LocalContext.current as AppCompatActivity).supportFragmentManager
@@ -184,7 +119,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
-   /*****************************************/
+    /*****************************************/
     @Composable
     fun ObserveViewModel(sharedViewModel: SharedViewModel) {
         val value = sharedViewModel.stateFlowVariable.collectAsState().value
@@ -221,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         updateMenu(newMenuConfig)
     }
     /*****************************************/
-   fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager, tag: String)
+    fun replaceFragment(containerId: Int, fragment: Fragment, fragmentManager: FragmentManager, tag: String)
     {
         val currentFragment = fragmentManager.findFragmentById(containerId)
         // Vérifiez si le fragment actuel est du même type que le nouveau fragment
